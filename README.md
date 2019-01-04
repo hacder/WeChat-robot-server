@@ -33,3 +33,8 @@ const types = {
 -   [ ] 自动收款 
 -   [x] 消息收取 
 -   [x] 消息发送 
+
+
+## 核心
+
+更多核心组件查看：[DLL核心项目 ](https://github.com/zhaojunlike/WeChat-Inject-Hook)
