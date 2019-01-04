@@ -1,0 +1,47 @@
+{
+  "name": "WeChat",
+  "version": "1.0.0",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --exec babel-node -- ./src/app.js",
+    "dev": "nodemon --watch server/**/*.ts --exec ts-node ./server/index.ts",
+    "clean": "rm -rf ./build/*",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/es6-promise": "^3.3.0",
+    "axios": "^0.18.0",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "bluebird": "^3.5.2",
+    "consola": "^2.3.0",
+    "dayjs": "^1.7.8",
+    "eventemitter3": "^3.1.0",
+    "iconv-lite": "^0.4.24",
+    "koa": "^2.6.2",
+    "koa-body": "^4.0.6",
+    "koa-bodyparser": "^4.2.1",
+    "koa-json": "^2.0.2",
+    "koa-jwt": "^3.5.1",
+    "koa-router": "^7.4.0",
+    "mongoose": "^5.4.0",
+    "nodemon": "^1.18.4",
+    "qrcode-terminal": "^0.12.0",
+    "qs": "^6.6.0",
+    "socket.io": "^1.*",
+    "socket.io-client": "^1.*",
+    "typescript": "^3.2.2",
+    "validator": "^10.8.0",
+    "websocket": "^1.0.28",
+    "winston": "^3.1.0",
+    "xml-js": "^1.6.8"
+  },
+  "devDependencies": {
+    "ts-node": "^7.0.1"
+  }
+}
