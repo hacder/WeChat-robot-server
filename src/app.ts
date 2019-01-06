@@ -1,13 +1,10 @@
 const Koa = require('koa')
 const bodyParser = require('koa-bodyparser');
-const jsonBody = require('koa-json')
 import models, {connection} from './models'
-
 
 //routes
 import users from "./router/users"
 import comments from "./router/comments"
-import logger from './lib/logger';
 
 const app = new Koa();
 

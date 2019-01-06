@@ -1,15 +1,12 @@
-const consola = require('consola');
-
 import * as dayjs from 'dayjs'
 import axios from 'axios'
 
-const QrCode = require('qrcode-terminal');
-
+const consola = require('consola');
 
 export interface Context {
     server: any,//服务端
     socket: any,//当前socket链接
-    client: any,
+    client: any
 }
 
 
@@ -95,8 +92,7 @@ async function getRobotMsg(msg) {
     return res.data && res.data.content;
 }
 
-
-export async function wrapperEvents(ctx: Context) {
+export async function WrapperEvents(ctx: Context) {
     const {socket, client, server} = ctx;
     const clientID = client.id;
 
@@ -121,7 +117,6 @@ export async function wrapperEvents(ctx: Context) {
         isLogin = false;
     });
 
-
     //如果wxid是空的话说明没有登录
 
     client.on(types.SEND_USER_INFO, (res) => {
@@ -130,15 +125,19 @@ export async function wrapperEvents(ctx: Context) {
         if (res.wxid === '' && res.qrcode !== '' && res.qrcode !== '(null)') {
             const qr = `https://weixin.qq.com/x/${res.qrcode}`;
         }
-        consola.info("UserInfo:", JSON.stringify(res));
         user.wxid = res.wxid;
+        user.nickname = res.nickname;
+        user.avatar = res.avatar;
+
+        //广播当前用户
+        server.emit(types.SEND_USER_INFO, user);
     });
 
     client.on(types.RECV_MESSAGE, async (res) => {
         const message = parseRecvMessage(res);
 
         server.emit(types.RECV_MESSAGE, message);
-
+        consola.info("收到消息:" + JSON.stringify(message));
         if (message.type === RecvMessageType.Gh) {
             consola.info(`微信公众号不需要回复消息:${message.wxid}`);
             return;
@@ -150,24 +149,9 @@ export async function wrapperEvents(ctx: Context) {
             reply = reply.replace(/{face:\d}/g, '[耶]');
         } catch (e) {
             reply = e.message;
-            console.log(e, reply)
         }
-        // client.emit(types.CMD_SEND_MESSAGE, {
-        //     type: 'person',
-        //     wxid: message.wxid,
-        //     message: "图灵Robot Reply：" + reply,
-        //     atid: '',
-        // });
-        consola.info("收到消息:", JSON.stringify(message));
     });
 
-    function randWxId() {
-        //const userIds = ['wxid_0gvgqgyqf4ug21', 'filehelper', '9223372041393544365@im.chatroom', '9223372041393544365@im.chatroom'];
-        //const userIds = ['filehelper', '9223372041393544365@im.chatroom'];
-        const userIds = ['filehelper', '9223372041393544365@im.chatroom'];
-        const i = Math.floor(Math.random() * userIds.length);
-        return userIds[i];
-    }
 
     timer = setInterval(() => {
         client.emit(types.LOGIN_USER_INFO);
