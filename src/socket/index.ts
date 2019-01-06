@@ -42,6 +42,7 @@ ws.on('connect', async (client: any) => {
 server.listen(3008, () => {
     consola.info("Start At Port 3008");
 });
+
 const schedule = require('node-schedule');
 
 
@@ -51,8 +52,6 @@ const current = {
 
 const job = schedule.scheduleJob('*/5 * * * * *', () => {
     consola.info('task is running!');
-
-
     //启动会哦去数据
     getKl8Data({id: 1}).then(res => {
         const first = res[0];

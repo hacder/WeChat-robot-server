@@ -1,5 +1,6 @@
 import * as dayjs from 'dayjs'
 import axios from 'axios'
+import {events} from "./types";
 
 const consola = require('consola');
 
@@ -9,17 +10,6 @@ export interface Context {
     client: any
 }
 
-
-const types = {
-    SEND_USER_INFO: 'SEND_USER_INFO',
-    SEND_MESSAGE: 'SEND_MESSAGE',
-    PONG: 'PONG',
-    broadcast: 'broadcast',
-    RECV_MESSAGE: 'RECV_MESSAGE',
-    CMD_SEND_MESSAGE: 'CMD_SEND_MESSAGE',
-    CMD_GET_LOGIN_USER: 'CMD_GET_LOGIN_USER',
-    LOGIN_USER_INFO: 'LOGIN_USER_INFO'
-};
 const XMLConvert = require('xml-js');
 
 export interface User {
@@ -105,7 +95,7 @@ export async function WrapperEvents(ctx: Context) {
     server.emit('broadcast'); // emit an event to all connected sockets
 
 
-    client.on(types.PONG, () => {
+    client.on(events.PONG, () => {
 
     });
 
@@ -119,7 +109,7 @@ export async function WrapperEvents(ctx: Context) {
 
     //如果wxid是空的话说明没有登录
 
-    client.on(types.SEND_USER_INFO, (res) => {
+    client.on(events.SEND_USER_INFO, (res) => {
         res = JSON.parse(res);
         isLogin = res.wxid !== '';
         if (res.wxid === '' && res.qrcode !== '' && res.qrcode !== '(null)') {
@@ -130,13 +120,13 @@ export async function WrapperEvents(ctx: Context) {
         user.avatar = res.avatar;
 
         //广播当前用户
-        server.emit(types.SEND_USER_INFO, user);
+        server.emit(events.SEND_USER_INFO, user);
     });
 
-    client.on(types.RECV_MESSAGE, async (res) => {
+    client.on(events.RECV_MESSAGE, async (res) => {
         const message = parseRecvMessage(res);
 
-        server.emit(types.RECV_MESSAGE, message);
+        server.emit(events.RECV_MESSAGE, message);
         consola.info("收到消息:" + JSON.stringify(message));
         if (message.type === RecvMessageType.Gh) {
             consola.info(`微信公众号不需要回复消息:${message.wxid}`);
@@ -151,14 +141,4 @@ export async function WrapperEvents(ctx: Context) {
             reply = e.message;
         }
     });
-
-
-    timer = setInterval(() => {
-        client.emit(types.LOGIN_USER_INFO);
-        client.emit(types.CMD_GET_LOGIN_USER);//一直监控用户登录是否
-        if (false == isLogin) {
-            return;
-        }
-        const message = "[耶]  时间" + dayjs().format('YYYY-MM-DD HH:mm:ss');
-    }, 3000);//1分钟发一次消息
 }
